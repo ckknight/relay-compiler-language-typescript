@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import * as ts from 'typescript';
 
 import {
   GraphQLEnumType,
@@ -11,9 +11,9 @@ import {
   GraphQLScalarType,
   GraphQLType,
   GraphQLUnionType
-} from "graphql";
+} from 'graphql';
 
-import { TypeGeneratorOptions } from "relay-compiler";
+import { TypeGeneratorOptions } from 'relay-compiler';
 
 export type ScalarTypeMapping = {
   [type: string]: string;
@@ -45,7 +45,7 @@ function transformNonNullableScalarType(
   objectProps?: ts.TypeNode
 ): ts.TypeNode {
   if (type instanceof GraphQLList) {
-    return ts.createTypeReferenceNode(ts.createIdentifier("ReadonlyArray"), [
+    return ts.createTypeReferenceNode(ts.createIdentifier('ReadonlyArray'), [
       transformScalarType(type.ofType, state, objectProps)
     ]);
   } else if (
@@ -68,14 +68,14 @@ function transformGraphQLScalarType(
   state: State
 ): ts.TypeNode {
   switch (state.customScalars[type.name] || type.name) {
-    case "ID":
-    case "String":
-    case "Url":
+    case 'ID':
+    case 'String':
+    case 'Url':
       return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
-    case "Float":
-    case "Int":
+    case 'Float':
+    case 'Int':
       return ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
-    case "Boolean":
+    case 'Boolean':
       return ts.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
     default:
       return ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
@@ -106,7 +106,7 @@ export function transformInputType(
 
 function transformNonNullableInputType(type: GraphQLInputType, state: State) {
   if (type instanceof GraphQLList) {
-    return ts.createTypeReferenceNode(ts.createIdentifier("ReadonlyArray"), [
+    return ts.createTypeReferenceNode(ts.createIdentifier('ReadonlyArray'), [
       transformInputType(type.ofType, state)
     ]);
   } else if (type instanceof GraphQLScalarType) {
@@ -123,7 +123,7 @@ function transformNonNullableInputType(type: GraphQLInputType, state: State) {
         const property = ts.createPropertySignature(
           [ts.createToken(ts.SyntaxKind.ReadonlyKeyword)],
           ts.createIdentifier(field.name),
-          field.type instanceof GraphQLNonNull
+          !(field.type instanceof GraphQLNonNull)
             ? ts.createToken(ts.SyntaxKind.QuestionToken)
             : undefined,
           transformInputType(field.type, state),
